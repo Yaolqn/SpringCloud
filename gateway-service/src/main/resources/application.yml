@@ -1,0 +1,44 @@
+server:
+  port: 8080  # 网关端口
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service  # lb://表示负载均衡
+          predicates:
+            - Path=/api/user/**  #如果有这个路径，则匹配上面的路由
+          filters:
+            - StripPrefix=1  # 去掉前缀/api/user
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1  # 去掉前缀/api/order
+            - name: CircuitBreaker  # 熔断配置
+              args:
+                name: orderCircuit
+                fallbackUri: forward:/fallback/order
+
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+
+# 熔断器配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      orderCircuit:
+        failureRateThreshold: 50  # 触发熔断的失败率
+        minimumNumberOfCalls: 5    # 最小调用次数
+        slidingWindowSize: 10      # 滑动窗口大小
