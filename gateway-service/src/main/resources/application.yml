@@ -6,6 +6,8 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      httpclient:
+        response-timeout: 2s  # 设置短于服务响应时间
       routes:
         - id: user-service
           uri: lb://user-service  # lb://表示负载均衡
@@ -42,3 +44,5 @@ resilience4j:
         failureRateThreshold: 50  # 触发熔断的失败率
         minimumNumberOfCalls: 5    # 最小调用次数
         slidingWindowSize: 10      # 滑动窗口大小
+
+

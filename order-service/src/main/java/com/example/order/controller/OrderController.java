@@ -15,7 +15,8 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    public Result<com.example.common.model.Order> getOrderWithUser(@PathVariable("id") Long id) {
+    public Result<com.example.common.model.Order> getOrderWithUser(@PathVariable("id") Long id) throws InterruptedException{
+        Thread.sleep(4000);
         return orderService.getOrderWithUser(id);
     }
 }
