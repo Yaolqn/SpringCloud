@@ -27,6 +27,14 @@ spring:
                 name: orderCircuit
                 fallbackUri: forward:/fallback/order
 
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - StripPrefix=1
+
+
       # 全局跨域配置
       globalcors:
         cors-configurations:
